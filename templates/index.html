@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Fake News Detection{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<div class="scroll-progress-track" aria-hidden="true">
+    <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+</div>
+
+<section class="hero-card reveal stagger-item">
+    <div class="hero-copy">
+        <span class="eyebrow">Logged-in workspace</span>
+        <h1>Detect suspicious news with a faster, smarter review dashboard.</h1>
+        <p class="hero-intro">
+            Welcome back, {{ g.user.username }}. Paste a headline, summary, or paragraph to get a credibility
+            decision, confidence signal, and practical warning cues in one guided flow.
+        </p>
+        <div class="hero-actions">
+            <a href="#analysis-workbench" class="primary-button">Start Analysis</a>
+            <button type="button" class="secondary-button" id="todayNewsButton">Today's News</button>
+            <a href="{{ url_for('history') }}" class="ghost-button">Open History</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-label">Total Checks</span>
+                <strong>{{ dashboard_data.total_checks }}</strong>
+                <p>Your saved analyses across the full account history.</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Likely Fake</span>
+                <strong>{{ dashboard_data.fake_count }}</strong>
+                <p>Items flagged as risky or misleading so far.</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Need Review</span>
+                <strong>{{ dashboard_data.uncertain_count }}</strong>
+                <p>Cases where the model could not judge confidently.</p>
+            </div>
+        </div>
+    </div>
+    <aside class="hero-aside">
+        <div class="signal-card floating-card">
+            <div class="signal-card-header">
+                <span>Live Workspace Status</span>
+                <span class="signal-status">Protected</span>
+            </div>
+            <div class="signal-metrics">
+                <div>
+                    <small>Saved account</small>
+                    <strong>{{ g.user.email }}</strong>
+                </div>
+                <div>
+                    <small>Recent checks</small>
+                    <strong>{{ dashboard_data.recent_items|length }}</strong>
+                </div>
+            </div>
+            <div class="signal-meter">
+                <div class="signal-meter-bar"></div>
+            </div>
+            <ul class="signal-list">
+                <li>Analysis is available only after secure login</li>
+                <li>Each result can be copied and saved into personal history</li>
+                <li>Today's News button loads current headlines in one click</li>
+                <li>Recent activity snapshot stays visible on the dashboard</li>
+            </ul>
+        </div>
+    </aside>
+</section>
+
+<section class="scrolly-shell reveal stagger-item" id="storytellingFlow">
+    <aside class="scrolly-rail">
+        <div class="scrolly-rail-card">
+            <span class="section-kicker">Story Flow</span>
+            <h2>Scroll to uncover how the verification journey unfolds.</h2>
+            <p>Each section becomes active as the page moves, turning platform details into a guided narrative instead of a flat dashboard.</p>
+            <div class="story-step-list">
+                <button type="button" class="story-step is-active" data-story-target="scene-intake">01 Input Intake</button>
+                <button type="button" class="story-step" data-story-target="scene-screening">02 Signal Screening</button>
+                <button type="button" class="story-step" data-story-target="scene-monitoring">03 Activity Monitoring</button>
+                <button type="button" class="story-step" data-story-target="scene-awareness">04 Daily Awareness</button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="scrolly-scenes">
+        <article class="story-scene is-active" id="scene-intake" data-story-scene>
+            <div class="story-scene-copy">
+                <span class="feature-index">01</span>
+                <h3>Start with a clear claim</h3>
+                <p>The journey begins with one suspicious headline, one paragraph, or one viral quote. The interface keeps the focus on the claim before anything else.</p>
+            </div>
+            <div class="story-scene-visual">
+                <div class="story-visual-card">
+                    <small>Live input discipline</small>
+                    <strong>Cleaner text leads to stronger analysis</strong>
+                    <p>Character count, read-time estimate, and a distraction-free editor prepare the claim for screening.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="story-scene" id="scene-screening" data-story-scene>
+            <div class="story-scene-copy">
+                <span class="feature-index">02</span>
+                <h3>Watch the system build confidence</h3>
+                <p>Scrolling into this stage emphasizes the moment where raw text becomes a structured decision with confidence and warning cues.</p>
+            </div>
+            <div class="story-scene-visual">
+                <div class="story-visual-card">
+                    <small>Decision engine</small>
+                    <strong>Real, Fake, or Uncertain</strong>
+                    <p>The flow highlights credibility scoring and rationale so the result feels editorial, not random.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="story-scene" id="scene-monitoring" data-story-scene>
+            <div class="story-scene-copy">
+                <span class="feature-index">03</span>
+                <h3>Track what keeps happening</h3>
+                <p>Saved history and recent activity transform one-off checks into an ongoing monitoring workspace for users and admins.</p>
+            </div>
+            <div class="story-scene-visual">
+                <div class="story-visual-card">
+                    <small>Workspace memory</small>
+                    <strong>{{ dashboard_data.total_checks }} total checks saved</strong>
+                    <p>Every completed run contributes to a more reviewable and report-friendly system.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="story-scene" id="scene-awareness" data-story-scene>
+            <div class="story-scene-copy">
+                <span class="feature-index">04</span>
+                <h3>Stay aligned with the day's narrative</h3>
+                <p>The final scroll stage brings in current headlines so the product feels alive, timely, and aware of the wider news cycle.</p>
+            </div>
+            <div class="story-scene-visual">
+                <div class="story-visual-card">
+                    <small>Daily context</small>
+                    <strong>Live headline snapshot on demand</strong>
+                    <p>The page connects personal analysis with the bigger picture through current news discovery.</p>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="card analysis-card reveal stagger-item" id="analysis-workbench">
+    <div class="section-heading">
+        <span class="section-kicker">Analysis Workbench</span>
+        <h2>Submit text for credibility screening</h2>
+        <p>Use a headline, article excerpt, or short news paragraph. Clearer input usually leads to stronger reasoning.</p>
+    </div>
+
+    <div class="analysis-toolbar">
+        <button type="button" class="ghost-button" id="clearTextButton">Clear Text</button>
+        <span class="toolbar-tip">Tip: include source, date, and main claim for better analysis.</span>
+    </div>
+
+    <form action="{{ url_for('analyze') }}" method="POST" id="analyzeForm">
+        <label for="news_text" class="input-label">News Text</label>
+        <textarea
+            id="news_text"
+            name="news_text"
+            rows="8"
+            maxlength="3000"
+            placeholder="Paste the article headline or a short news paragraph here..."
+            required
+        ></textarea>
+        <div class="form-meta">
+            <span id="charCount">0 / 3000 characters</span>
+            <span id="readTimeEstimate">Estimated reading time: 0 min</span>
+            <span>Recommended minimum: 20 characters</span>
+        </div>
+        <button type="submit" class="primary-button" id="analyzeButton">
+            <span class="button-text">Analyze</span>
+            <span class="spinner hidden" id="loadingSpinner"></span>
+        </button>
+    </form>
+    <div class="loading-stage hidden" id="analysisLoadingStage" aria-live="polite">
+        <div class="car-loader" aria-hidden="true">
+            <div class="car-loader-road"></div>
+            <div class="car-loader-vehicle">
+                <span class="car-top"></span>
+                <span class="car-body"></span>
+                <span class="car-window"></span>
+                <span class="car-wheel car-wheel-front"></span>
+                <span class="car-wheel car-wheel-back"></span>
+            </div>
+        </div>
+        <div class="loading-stage-core">
+            <span class="section-kicker">Processing</span>
+            <h3>Scanning claim patterns and credibility signals</h3>
+            <p>Please wait while the analysis engine reviews your text.</p>
+        </div>
+    </div>
+</section>
+
+<section class="feature-grid reveal stagger-item">
+    <article class="card feature-card">
+        <span class="feature-index">01</span>
+        <h3>Quick Input Helpers</h3>
+        <p>Use instant clear, live character count, and reading-time estimate to make analysis input cleaner and faster.</p>
+    </article>
+    <article class="card feature-card">
+        <span class="feature-index">02</span>
+        <h3>Protected Detection Flow</h3>
+        <p>Only authenticated users can access the analyzer and results, making the workflow feel more like a real product dashboard.</p>
+    </article>
+    <article class="card feature-card">
+        <span class="feature-index">03</span>
+        <h3>Recent Activity Snapshot</h3>
+        <p>See your latest saved checks right on the home dashboard without opening the full history table.</p>
+    </article>
+</section>
+
+<section class="dashboard-grid reveal stagger-item">
+    <article class="card feature-card">
+        <span class="feature-index">04</span>
+        <h3>Result Mix</h3>
+        <p>Likely Real: {{ dashboard_data.real_count }} | Likely Fake: {{ dashboard_data.fake_count }} | Uncertain: {{ dashboard_data.uncertain_count }}</p>
+    </article>
+    <article class="card recent-card">
+        <div class="section-heading compact-heading">
+            <div>
+                <span class="section-kicker">Recent Activity</span>
+                <h2>Latest saved analyses</h2>
+            </div>
+            <a href="{{ url_for('history') }}" class="secondary-button">View All</a>
+        </div>
+
+        {% if dashboard_data.recent_items %}
+            <div class="recent-list">
+                {% for item in dashboard_data.recent_items %}
+                    <div class="recent-item">
+                        <div class="recent-item-top">
+                            <span class="mini-badge result-{{ item.result|lower }}">
+                                {{ "Likely Real" if item.result == "REAL" else "Likely Fake" if item.result == "FAKE" else "Uncertain" }}
+                            </span>
+                            <strong>{{ item.confidence }}%</strong>
+                        </div>
+                        <p>{{ item.news_text[:140] }}{% if item.news_text|length > 140 %}...{% endif %}</p>
+                        <small>{{ item.created_at }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state compact-empty-state">
+                <h3>No saved analysis yet</h3>
+                <p>Your first completed detection will appear here automatically.</p>
+            </div>
+        {% endif %}
+    </article>
+</section>
+
+<section class="card news-panel reveal stagger-item hidden" id="todayNewsSection">
+    <div class="section-heading history-header">
+        <div>
+            <span class="section-kicker">Today's News</span>
+            <h2 id="todayNewsHeading">Current headlines</h2>
+            <p id="todayNewsMessage">Fetching the latest available headlines...</p>
+        </div>
+        <button type="button" class="secondary-button" id="refreshNewsButton">Refresh News</button>
+    </div>
+    <div class="news-loading hidden" id="newsLoadingState" aria-live="polite">
+        <div class="news-loading-card"></div>
+        <div class="news-loading-card"></div>
+        <div class="news-loading-card"></div>
+    </div>
+    <div class="news-list" id="todayNewsList"></div>
+</section>
+{% endblock %}

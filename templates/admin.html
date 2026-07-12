@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | Fake News Detection{% endblock %}
+{% block body_class %}page-admin{% endblock %}
+
+{% block content %}
+<section class="hero-card reveal stagger-item">
+    <div class="hero-copy">
+        <span class="eyebrow">Admin Control Room</span>
+        <h1>Platform health, user activity, and moderation in one place.</h1>
+        <p class="hero-intro">
+            This workspace is for admin visibility. Track platform usage, review the latest analyses,
+            manage admin access, and clear a user's saved history when needed.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('admin_export') }}" class="primary-button">Export Full Report</a>
+            <a href="#admin-users" class="secondary-button">Manage Users</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-label">Total Users</span>
+                <strong>{{ admin_data.total_users }}</strong>
+                <p>Registered accounts across the platform.</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Admin Users</span>
+                <strong>{{ admin_data.admin_count }}</strong>
+                <p>Accounts with full management access.</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Checks Today</span>
+                <strong>{{ admin_data.todays_checks }}</strong>
+                <p>Analyses created on the current day.</p>
+            </div>
+        </div>
+    </div>
+    <aside class="hero-aside">
+        <div class="signal-card floating-card">
+            <div class="signal-card-header">
+                <span>System Snapshot</span>
+                <span class="signal-status">Admin Live</span>
+            </div>
+            <div class="signal-metrics">
+                <div>
+                    <small>Total analyses</small>
+                    <strong>{{ admin_data.total_checks }}</strong>
+                </div>
+                <div>
+                    <small>Need review</small>
+                    <strong>{{ admin_data.uncertain_count }}</strong>
+                </div>
+            </div>
+            <div class="signal-meter">
+                <div class="signal-meter-bar"></div>
+            </div>
+            <ul class="signal-list">
+                <li>Likely Real: {{ admin_data.real_count }}</li>
+                <li>Likely Fake: {{ admin_data.fake_count }}</li>
+                <li>Uncertain: {{ admin_data.uncertain_count }}</li>
+                <li>Role and history actions are available below</li>
+            </ul>
+        </div>
+    </aside>
+</section>
+
+<section class="feature-grid reveal stagger-item">
+    <article class="card feature-card">
+        <span class="feature-index">01</span>
+        <h3>Usage Oversight</h3>
+        <p>Track total users, admin coverage, daily checks, and platform-wide analysis volume.</p>
+    </article>
+    <article class="card feature-card">
+        <span class="feature-index">02</span>
+        <h3>User Management</h3>
+        <p>Promote trusted users to admin or return them to regular-user access when needed.</p>
+    </article>
+    <article class="card feature-card">
+        <span class="feature-index">03</span>
+        <h3>Activity Monitoring</h3>
+        <p>Review the latest analyses with usernames, confidence values, and timestamps.</p>
+    </article>
+</section>
+
+<section class="card reveal stagger-item">
+    <div class="section-heading history-header">
+        <div>
+            <span class="section-kicker">Recent Activity</span>
+            <h2>Latest platform analyses</h2>
+            <p>Most recent saved items across all users.</p>
+        </div>
+        <a href="{{ url_for('admin_export') }}" class="secondary-button">Download CSV</a>
+    </div>
+
+    {% if admin_data.recent_activity %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>News Text</th>
+                        <th>Result</th>
+                        <th>Confidence</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in admin_data.recent_activity %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.username }}</strong><br>
+                                <span class="table-subtext">{{ item.email }}</span>
+                            </td>
+                            <td>{{ item.news_text[:140] }}{% if item.news_text|length > 140 %}...{% endif %}</td>
+                            <td>
+                                <span class="mini-badge result-{{ item.result|lower }}">
+                                    {{ "Likely Real" if item.result == "REAL" else "Likely Fake" if item.result == "FAKE" else "Uncertain" }}
+                                </span>
+                            </td>
+                            <td>{{ item.confidence }}%</td>
+                            <td>{{ item.created_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No activity available yet</h3>
+            <p>Saved analyses will appear here once users start checking news.</p>
+        </div>
+    {% endif %}
+</section>
+
+<section class="card reveal stagger-item" id="admin-users">
+    <div class="section-heading history-header">
+        <div>
+            <span class="section-kicker">User Oversight</span>
+            <h2>Users and admin controls</h2>
+            <p>See user status, last activity, and quick management actions.</p>
+        </div>
+    </div>
+
+    {% if admin_data.user_rows %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Total Checks</th>
+                        <th>Joined</th>
+                        <th>Last Activity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in admin_data.user_rows %}
+                        <tr>
+                            <td>
+                                <strong>{{ user.username }}</strong><br>
+                                <span class="table-subtext">{{ user.email }}</span>
+                            </td>
+                            <td>
+                                <span class="mini-badge {{ 'admin-badge' if user.is_admin else 'user-badge' }}">
+                                    {{ 'Admin' if user.is_admin else 'User' }}
+                                </span>
+                            </td>
+                            <td>{{ user.total_checks }}</td>
+                            <td>{{ user.created_at or 'Not recorded' }}</td>
+                            <td>{{ user.last_activity or 'No activity yet' }}</td>
+                            <td>
+                                <div class="inline-actions">
+                                    {% if user.id != g.user.id %}
+                                        <form action="{{ url_for('toggle_admin_role', user_id=user.id) }}" method="POST">
+                                            <button type="submit" class="ghost-button">
+                                                {{ 'Remove Admin' if user.is_admin else 'Make Admin' }}
+                                            </button>
+                                        </form>
+                                        <form action="{{ url_for('admin_clear_user_history', user_id=user.id) }}" method="POST" onsubmit="return confirm('Clear saved history for this user?');">
+                                            <button type="submit" class="ghost-button danger-outline">Clear History</button>
+                                        </form>
+                                    {% else %}
+                                        <span class="table-subtext">Current logged-in admin</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No users found</h3>
+            <p>Once people sign up, their account details will appear in this admin table.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

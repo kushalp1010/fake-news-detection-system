@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result | Fake News Detection{% endblock %}
+{% block body_class %}page-result{% endblock %}
+
+{% block content %}
+<section class="card result-layout reveal stagger-item">
+    <div class="section-heading">
+        <span class="section-kicker">Result Summary</span>
+        <h2>Credibility assessment completed</h2>
+        <p>Your submitted text has been screened and organized into a professional review layout.</p>
+    </div>
+
+    <div class="result-top">
+        <div class="result-pill result-{{ result_data.result|lower }}">{{ result_label }}</div>
+        <div class="confidence-box">
+            <span>Confidence</span>
+            <strong>{{ result_data.confidence }}%</strong>
+        </div>
+    </div>
+
+    <div class="result-grid">
+        <div class="result-panel">
+            <h3>Submitted Text</h3>
+            <p class="news-preview">{{ result_data.news_text }}</p>
+        </div>
+        <div class="result-panel">
+            <h3>Assessment Rationale</h3>
+            <p>{{ result_data.reason }}</p>
+        </div>
+    </div>
+
+    <div class="result-panel">
+        <h3>Risk Indicators</h3>
+        {% if result_data.warnings %}
+            <ul class="warning-list">
+                {% for warning in result_data.warnings %}
+                    <li>{{ warning }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No major warning signals were returned for this submission.</p>
+        {% endif %}
+    </div>
+
+    <div class="result-panel result-checklist">
+        <h3>Recommended Next Checks</h3>
+        <ul class="warning-list">
+            <li>Verify whether the claim appears on a trusted publisher or official source.</li>
+            <li>Cross-check dates, locations, and quoted numbers before sharing the story.</li>
+            <li>Review emotionally charged wording because it often signals weak sourcing.</li>
+        </ul>
+    </div>
+
+    <div class="action-row">
+        <a href="{{ url_for('index') }}" class="secondary-button">Analyze Another</a>
+        <a href="{{ url_for('history') }}" class="primary-button">View Saved History</a>
+        <button type="button" id="copyResultButton" class="ghost-button">Copy Result</button>
+    </div>
+</section>
+{% endblock %}

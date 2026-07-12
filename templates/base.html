@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fake News Detection Web App{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% block body_class %}page-default{% endblock %}">
+    <div class="page-background">
+        <div class="background-orb orb-one"></div>
+        <div class="background-orb orb-two"></div>
+        <div class="background-grid"></div>
+    </div>
+    <div class="page-shell">
+        <header class="topbar">
+            <a href="{{ url_for('index') }}" class="brand">
+                <span class="brand-mark">FN</span>
+                <span class="brand-text">
+                    <strong>Fake News Detection</strong>
+                    <small>{% if g.user %}Credibility screening workspace{% else %}Secure news verification portal{% endif %}</small>
+                </span>
+            </a>
+            <nav class="navbar">
+                <div class="nav-links">
+                    {% if g.user %}
+                        <a href="{{ url_for('index') }}">Dashboard</a>
+                        {% if g.user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+                        {% endif %}
+                    {% endif %}
+                    <a href="{{ url_for('about') }}">About</a>
+                    {% if g.user %}
+                        <a href="{{ url_for('history') }}">History</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Login</a>
+                        <a href="{{ url_for('signup') }}" class="nav-button">Sign Up</a>
+                    {% endif %}
+                </div>
+                <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode">
+                    <span class="theme-toggle-icon" aria-hidden="true">D</span>
+                    <span class="theme-toggle-label">Dark</span>
+                </button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-stack">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

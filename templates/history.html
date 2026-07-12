@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}History | Fake News Detection{% endblock %}
+{% block body_class %}page-history{% endblock %}
+
+{% block content %}
+<section class="card reveal stagger-item">
+    <div class="section-heading history-header">
+        <div>
+            <span class="section-kicker">Saved Records</span>
+            <h2>Analysis history</h2>
+            <p>Review prior credibility checks stored for your account.</p>
+        </div>
+        <div class="history-actions">
+            <a href="{{ url_for('export_history') }}" class="secondary-button">Export CSV</a>
+            <form action="{{ url_for('clear_history') }}" method="POST" onsubmit="return confirm('Clear all saved history?');">
+                <button type="submit" class="ghost-button danger-outline">Clear History</button>
+            </form>
+        </div>
+    </div>
+
+    {% if history_items %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>News Text</th>
+                        <th>Result</th>
+                        <th>Confidence</th>
+                        <th>Reason</th>
+                        <th>Date / Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history_items %}
+                        <tr>
+                            <td>{{ item.news_text[:120] }}{% if item.news_text|length > 120 %}...{% endif %}</td>
+                            <td>
+                                <span class="mini-badge result-{{ item.result|lower }}">
+                                    {{ "Likely Real" if item.result == "REAL" else "Likely Fake" if item.result == "FAKE" else "Uncertain" }}
+                                </span>
+                            </td>
+                            <td>{{ item.confidence }}%</td>
+                            <td>{{ item.reason }}</td>
+                            <td>{{ item.created_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No saved history yet</h3>
+            <p>Once you analyze and save submissions, they will appear here in a structured archive table.</p>
+            <a href="{{ url_for('index') }}" class="primary-button">Go to Analyzer</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

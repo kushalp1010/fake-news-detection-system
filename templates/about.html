@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}About | Fake News Detection{% endblock %}
+{% block body_class %}page-about{% endblock %}
+
+{% block content %}
+<section class="card reveal stagger-item">
+    <div class="section-heading">
+        <span class="section-kicker">Platform Overview</span>
+        <h2>How the fake news detection app is positioned</h2>
+        <p>This project presents news screening in a clearer, more product-like way while keeping the underlying Flask workflow simple.</p>
+    </div>
+
+    <div class="about-grid">
+        <article class="feature-card">
+            <span class="feature-index">01</span>
+            <h3>Why It Matters</h3>
+            <p>
+                Misleading or manipulated stories spread quickly, especially when headlines are emotional,
+                vague, or unsupported by reliable sources.
+            </p>
+        </article>
+        <article class="feature-card">
+            <span class="feature-index">02</span>
+            <h3>How Screening Works</h3>
+            <p>
+                Users submit a short piece of news text. The app sends it for model analysis and returns
+                a result label, confidence value, explanation, and warning indicators.
+            </p>
+        </article>
+        <article class="feature-card">
+            <span class="feature-index">03</span>
+            <h3>Tech Stack</h3>
+            <p>
+                Flask, Jinja2, SQLite, JavaScript, HTML, CSS, and Gemini API integration power the current workflow.
+            </p>
+        </article>
+    </div>
+
+    <div class="card mini-info">
+        <h3>Operational Flow</h3>
+        <p>Secure login, text submission, request validation, model analysis, structured response parsing, result display, and account-based storage.</p>
+    </div>
+</section>
+{% endblock %}
