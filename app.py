@@ -59,7 +59,7 @@ NEWS_FEED_URLS = [
 PORT = int(os.getenv("PORT", 5000))
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-this-secret-key")
 app.config["DATABASE"] = str(BASE_DIR / "database.db")
-app.config["GEMINI_MODEL"] = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+app.config["GEMINI_MODEL"] = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
